@@ -55,6 +55,11 @@ credentials_file_provider <- function(profile = "") {
 
   if (is.null(credentials[[aws_profile]])) return(NULL)
 
+  if ("source_profile" %in% names(credentials[[aws_profile]])) {
+    profile <- credentials[[aws_profile]]
+    aws_profile <- profile$source_profile
+  }
+
   access_key_id <- credentials[[aws_profile]]$aws_access_key_id
   secret_access_key <- credentials[[aws_profile]]$aws_secret_access_key
   session_token <- credentials[[aws_profile]]$aws_session_token
