@@ -57,12 +57,28 @@ credentials_file_provider <- function(profile = "") {
 
   if ("source_profile" %in% names(credentials[[aws_profile]])) {
     profile <- credentials[[aws_profile]]
-    aws_profile <- profile$source_profile
+    source_profile <- profile$source_profile
   }
 
-  access_key_id <- credentials[[aws_profile]]$aws_access_key_id
-  secret_access_key <- credentials[[aws_profile]]$aws_secret_access_key
-  session_token <- credentials[[aws_profile]]$aws_session_token
+  # retrieve credentials by checking in both aws profile and source
+  # profile because they can exist in either.
+  if ("aws_access_key_id" %in% names(credentials[[aws_profile]])){
+    access_key_id <- credentials[[aws_profile]]$aws_access_key_id
+  }else{
+    access_key_id <- credentials[[source_profile]]$aws_access_key_id
+  }
+
+  if ("aws_secret_access_key" %in% names(credentials[[aws_profile]])){
+    access_key_id <- credentials[[aws_profile]]$aws_secret_access_key
+  }else{
+    access_key_id <- credentials[[source_profile]]$aws_secret_access_key
+  }
+
+  if ("session_token" %in% names(credentials[[aws_profile]])){
+    access_key_id <- credentials[[aws_profile]]$session_token
+  }else{
+    access_key_id <- credentials[[source_profile]]$session_token
+  }
 
   if (is.null(access_key_id) || is.null(secret_access_key)) return(NULL)
 
